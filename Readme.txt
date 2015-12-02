@@ -8,8 +8,10 @@ SCRIPTGRILLES :
 > output = fichier json exploitable
 
 JEU :
-> migration en objet basé sur données json terminée
-> 
+> restructuration du code pour utiliser 2 classes, plus de fonctions
+> le jeu tourne et fonctionne
+> Il reste les tests pour les entrées de l'utilisateur, la fonction de chargement des grilles et la partie graphique
+
 V1==================================================
 > basé sur le format tableau
 > implémentation de la classe car(string), récuperant les informations de position, taille et direction de la voiture instanciée dans le tableau à double entrées.
