@@ -13,12 +13,12 @@ from car import *
 # ------------------------------------------------------------------------------
 class Grid:
 
-  def __init__(self, dic):
+  def __init__(self, dic, ngrid):
+    self.key = ngrid
     self.cars = {}
     for key in dic:
       self.cars[key] = Car(dic[key], key) #rentre les données des différentes voitures sur la grille
-
-
+    
   def toArray(self):
     """ renvoie un tableau pour afficher avec grid (ezCLI) """
     

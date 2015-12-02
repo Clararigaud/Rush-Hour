@@ -13,7 +13,6 @@ import json
 def error_msg(code):
   """ methode d'affichage des messages d'erreur """
   assert isinstance(code, (str)), "<code> must be an str"
-  
   if code == "outofstreet":
     print("Il faut rester sur la route !")
   elif code == "occupied":
@@ -22,86 +21,143 @@ def error_msg(code):
     print("Cette voiture ne peut pas rouler dans cette direction")
   elif code == "nocar":
     print("Il n'y a pas de voiture à ce nom")
-
-
-def parser(grid):
+   
+def game(ngrid, player):
   """ gère les fonctions appelées pour le déplacement d'une voiture"""
-  assert isinstance(grid, type(grid)), "<grid> must be of type grid"
-
-  command = ""
-  while len(command) != 2: #redemande tant que l'utilisateur ne rentre pas 2 lettres
-    command = input("Entrez le mouvement (nom de la voiture et nom de la direction en anglais (ex: ZU, ZD, ZL, ZR)) : ")
-
-  carName = command[0].upper()
-  direc = command[1].upper()
-  if carName in grid.cars:
-    car = grid.cars[carName]  #Vérifie si le nom entré par l'utilisateur correspond bien à une voiture
-  else:
-    car = None #si l'utilisateur n'a pas écrit le nom d'une voiture sur la grille, vaut None
-  result = grid.move(car, direc) #renvoie une str avec le nom de l'erreur s'il y en a
-  error_msg(result)
-  
-  return result == "win"
-  #retourne vrai si result vaut "win"
-
-def gridChoice(choice,num,mapNum):
-  """ renvoie le numérode la grille à jouer selon si l'utilisateur joue dans l'ordre ou non"""
-  assert isinstance(choice, (str)), "<choice> must be an str "
-  assert isinstance(num, (int)), "<num> must ba an int "
-  assert isinstance(mapNum, (list)), "<mapNum> must be a list"
-  
-  if choice == "ordre":
-    num2 = mapNum[num] #l'indice num du tableau mapNum correspond à la valeur de la grille à jouer
-    print("Vous jouez sur la grille %s" % num2)
-  else:
-    num2 = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :"))
-    while str(num2) not in mapNum:
-      print("Il y a 40 grilles donc rentrez un numéro compris entre 1 et 40")
-      num2 = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :"))
-  return num2
-
-def main():
-  
-  gdicts = json.load(open('grilles.json'))
-
-  mapNum = ["%s" %i for i in range(1,41)]
-
-  choice = input("voulez-vous faire les niveaux dans l'ordre ou choisir le niveau? (ordre/choix) :")
-  while choice not in ["ordre","choix"]:
-    choice = input("Je n'ai pas compris. Vous devez rentrer 'ordre' (dans l'ordre) ou 'choix' :")
-  num = 0
-  
-  
-  toContinue = "oui"
-  
-  while toContinue == "oui":
-
-    num = gridChoice(choice, num, mapNum)
-    
-    gdict = gdicts[str(num)]
-    gameGrid = Grid(gdict)
+    gdicts = json.load(open('grilles.json'))
+    gdict = gdicts[str(ngrid)]
+    gameGrid = Grid(gdict, ngrid)
 
     trials = 0              #trials iterator
     while(True):
+      trials +=1            #à chaque tour de boucle, un essai supplémentaire 
+      print(grid(["GRILLE " + str(gameGrid.key)],inner=False))
       print(grid(gameGrid.toArray(), size=3))
-
-      #a = input("Passer la grille? (o)")     #pour tester sans avoir à jouer la grille
-      #if a == "o":
-      
-      if parser(gameGrid):      #parser renvoie faux tant que la voiture Z n'es pas sortie
-        break               #du coup si il renvoie vrai, c'est qu'on a gagné, donc on sort de la boucle
-      trials +=1            #à chaque tour de boucle, un essai supplémentaire
+      command = ""
+      while len(command) != 2: #redemande tant que l'utilisateur ne rentre pas 2 lettres
+        command = input("Entrez le mouvement (nom de la voiture et nom de la direction en anglais (ex: ZU, ZD, ZL, ZR)) : \n OP pour acceder aux options\n> ")
+      if command == "OP":
+        if(option_menu(player, gameGrid.key)==False):
+          break   
+      else:  
+        carName = command[0].upper()
+        direc = command[1].upper()
+        if carName in gameGrid.cars:
+          car = gameGrid.cars[carName]  #Vérifie si le nom entré par l'utilisateur correspond bien à une voiture
+        else:
+          car = None #si l'utilisateur n'a pas écrit le nom d'une voiture sur la grille, vaut None
+        result = gameGrid.move(car, direc) #renvoie une str avec le nom de l'erreur s'il y en a
+        error_msg(result)
+        if result == "win":
+          win_menu(ngrid, player, trials)
+          break
           
-    print("WINNER !! \nNombre de coups :", trials)
-    toContinue = input("Voulez-vous passer à la grille suivante? (oui/non) :")
-    while toContinue not in ["oui","non"]:
-      toContinue = input("Je n'ai pas compris. Vous devez rentrer 'oui' ou 'non'. Voulez-vous jouer encore une fois? :")
-      
-  print("Au revoir!!")
-    
-#ToDo :
+
+def playerchoice(): #TODO
+  print("\n --- indisponible pour le moment ---\n")
+  entree = input("Quel est votre pseudo ?")
+  return -1 
+
+def gridchoice(player):  #OK
+  """ Permet à l'utilisateur de choisir une grille, renvoie le numero de grille choisi """
+  mapNum = ["%s" %i for i in range(1,41)]
+  gridnumber = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :"))
+
+  while str(gridnumber) not in mapNum:
+    print("Il y a 40 grilles donc rentrez un numéro compris entre 1 et 40")
+    gridnumber = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :"))
+  return gridnumber
+
+def scoreslist(player): #TODO
+  print("\n --- indisponible pour le moment ---\n")
+  main_menu(player)
    
-    # faire l'enregistrement de la partie en cours et du coup le chargement d'une partie antérieure
+def savegame(player, ngrid, trials): #TODO
+  return True
+
+def savenewgame(): #TODO
+  print("\n --- indisponible pour le moment ---\n") 
+  #pseudo = input("Pseudo : ")  
+  quitgame(player)
+  
+def quitgame(player):  #OK
+  if player == -1:
+    entree = input("Voulez vous sauvegarder votre partie ?\n> ")
+    if entree == "oui":
+      savenewgame() 
+  print("Au revoir !")
+
+def win_menu(ngrid, player, trials): #OK
+  """ S'affiche lorsqu'une grille est terminée, choix de passer au niveau suivant, choisir un autre niveau ou retourner au menu principal"""
+  print("WINNER !! \nNombre de coups :", trials)
+  savegame(player, ngrid, trials)
+  
+  if (ngrid == 40):
+    entree = input("Bravo ! Vous avez terminé le jeu !\n" + grid([["CHOISIR UN NIVEAU","choixniveau"],["MENU PRINCIPAL","menu"]]) + "\n>") 
+  else:
+    entree = input(grid([["GRILLE SUIVANTE","next"],["CHOISIR UN NIVEAU","choixniveau"],["MENU PRINCIPAL","menu"]]) +"\n> ")
+
+  if entree=="next":
+    game(ngrid+1, player)
+  elif entree=="choixniveau":
+    game(gridchoice(player), player)
+  elif entree=="menu":
+    main_menu(player)
+
+def option_menu(player, ngrid):  #OK
+  """ Choix de,  retourner au menu principal, sauter le niveau, choisir un autre niveau, retour à la grille"""
+  choixaction = ""
+  while choixaction not in ["menu", "passer", "choixniveau","retour"]:
+    choixaction= input(grid(["OPTIONS"], inner=False)+"\n"+
+	grid([["ACTION","Entrez"],
+    ["PASSER CE NIVEAU","passer"],
+    ["MENU PRINCIPAL","menu"],
+    ["CHOISIR UN AUTRE NIVEAU","choixniveau"],
+    ["RETOUR","retour"]], inner=False)+"\n> ")
+  if choixaction == "menu":
+    main_menu(player)
+    return False
+  elif choixaction == "passer":
+    if ngrid == 40 :
+      main_menu(player)
+    else:
+      game(ngrid+1,player)
+    return False
+  elif choixaction == "choixniveau":
+    game(gridchoice(player), player)
+    return False
+  elif choixaction == "retour":
+    return True
+
+def main_menu(player):  #OK
+  """ Choix de retourner jouer la première grille, choisir un niveau, charger une partie, voir les scores, quitter"""
+  choixaction = ""
+  #Verification de saisie
+  while choixaction not in ["jouer","choixniveau","charger", "scores","quit"]:
+    choixaction = input(grid([
+    ["ACTION","Entrez"],
+    ["JOUER","jouer"],
+    ["CHOISIR UN NIVEAU","choixniveau"],
+    ["CHARGER UNE PARTIE","charger"],
+    ["MEILLEURS SCORES","scores"],
+    ["QUITTER","quit"]], inner=False)+"\n> ")
+  if choixaction == "jouer" :
+    game(1, player)
+  elif choixaction == "choixniveau":
+    game(gridchoice(player), player)
+  elif choixaction == "charger" :
+    player = playerchoice()
+    game(gridchoice(player), player)
+  elif choixaction == "scores" :
+    scoreslist(player)
+  elif choixaction == "quit":
+    quitgame(player)
+    
+def main():
+  print(grid(["     RUSH HOUR     "], inner=False))
+  # INIT
+  player = -1 #nouveau joueur
+  main_menu(player) 
 
 # ==============================================================================
 if __name__ == '__main__':
