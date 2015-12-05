@@ -1,19 +1,19 @@
 # ==============================================================================
-"""BINO : compute the binomial coefficient C(n,p)"""
+"""RUSH HOUR : get your car out of this mess !"""
 # ==============================================================================
-__author__  = "Christophe Schlick"
-__version__ = "2.0" # use 'for' loop to generate string
-__date__    = "2015-09-01"
-__usage__   = """
-User input: <n>, <p> (where n:int > 0, p:int >=0)
-App output: binomial coefficient C(n,p)"""
+__author__  = "Gwladys Léré, Clara Rigaud"
+__version__ = "3.0"
+__date__    = "2015-12-13"
+__usage__   = """"""
 # ==============================================================================
-from ezCLI import *
 from car import *
+import json
 # ------------------------------------------------------------------------------
 class Grid:
 
-  def __init__(self, dic, ngrid):
+  def __init__(self, ngrid):
+    gdicts = json.load(open('grilles.json'))
+    dic = gdicts[str(ngrid)]
     self.key = ngrid
     self.cars = {}
     for key in dic:
@@ -31,8 +31,7 @@ class Grid:
           gameArray[i][car.x] = car.name
       else:
         for i in range (car.x, car.x + car.width):
-          gameArray[car.y][i] = car.name
-          
+          gameArray[car.y][i] = car.name  
     return gameArray
 
 
