@@ -67,7 +67,7 @@ def gridchoice(player):  #OK   #implémenter une option retourmenu pourrait êtr
   display = [[],[]]
   for i in range (1,41):
     if player.hasplayed(i):
-      score = str(player.getgridscore(i))
+      score = str(player.get_player_grid_score(i))
     else:
       score = "X"
     display[0].append(i)
@@ -100,15 +100,22 @@ def newplayer(player):  #OK
   player.setname(pseudo)
   
 def save(player): #OK
-  if player.name == None:
-    newplayer(player)
+  if not(player.islogged()):
+    entree = input("Avez vous vous déjà une partie d'enregistrée? <Oui/non>\n> ")
+    if entree== "oui":
+      player2 = playerchoice(player)
+      player.sync(player2)
+    else:
+      newplayer(player)
   player.saveinfile()
+  return True
   
 def quitgame(player):  #OK
   entree = input("Voulez vous sauvegarder votre partie ?  <oui>/<non>\n> ")
   if entree == "oui":
     save(player)
-  if player.name:
+    print("sauvegardé !")
+  if player.islogged():
     print("Au revoir " + player.name +" !")
   else :
     print("Au revoir !")
@@ -116,7 +123,7 @@ def quitgame(player):  #OK
 def win_menu(ngrid, player, trials): #OK
   """ S'affiche lorsqu'une grille est terminée, choix de passer au niveau suivant, choisir un autre niveau ou retourner au menu principal"""
   print("WINNER !! \nNombre de coups :", trials)
-  player.setgridscore(ngrid, trials)
+  player.set_player_grid_score(ngrid, trials)
   
   if (ngrid == 40):
     entree = input("Bravo ! Vous avez terminé le jeu !\n" + grid([["CHOISIR UN NIVEAU","choixniveau"],["MENU PRINCIPAL","menu"]]) + "\n>") 
@@ -160,7 +167,7 @@ def main_menu(player):  #OK
   print(grid(["     RUSH HOUR     "], inner=False))
   choixaction = ""
   #Verification de saisie
-  while choixaction not in ["jouer","choixniveau","charger","sauver" "scores","quit"]:
+  while choixaction not in ["jouer","choixniveau","charger","sauver", "scores","quit"]:
     choixaction = input(grid([
     ["ACTION","Entrez"],
     ["JOUER","jouer"],
@@ -177,7 +184,9 @@ def main_menu(player):  #OK
     player = playerchoice(player)
     start_level(gridchoice(player), player)
   elif choixaction == "sauver":
-    save(player)
+    if save(player):
+      print("Sauvegardé !")
+      main_menu(player)
   elif choixaction == "scores" :
     scoreslist(player)
   elif choixaction == "quit":
