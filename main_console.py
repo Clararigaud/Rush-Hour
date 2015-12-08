@@ -20,7 +20,7 @@ def error_msg(code):
   elif code == "wrongdir":
     print("Cette voiture ne peut pas rouler dans cette direction")
   elif code == "nocar":
-    print("Il n'y a pas de voiture à ce nom")
+    print("Il n'y a pas de voiture de ce nom")
    
 def start_level(ngrid, player):
   """ Boucle pour un niveau de jeu"""
@@ -48,18 +48,16 @@ def start_level(ngrid, player):
       if result == "win":
         win_menu(ngrid, player, trials)
         break
-          
-
+        
 def playerchoice(player): #OK
   """charger un joueur existant, renvoie l'objet joueur associé au nom entré"""
-  players = player.playernames()
+  players = playernames()
   for player in players : print("- "+player) 
   entree = input("Quel est votre pseudo ? \n> ")
   while entree not in players:
     entree = input("Il n'y a pas de joueur de ce nom ... \nQuel est votre pseudo ?\n> ")
   return Player(entree)
   
-
 def gridchoice(player):  #OK   #implémenter une option retourmenu pourrait être cool
   """ Permet à l'utilisateur de choisir une grille, renvoie le numero de grille choisi """
   mapNum = ["%s" %i for i in range(1,41)]
@@ -88,13 +86,24 @@ def gridchoice(player):  #OK   #implémenter une option retourmenu pourrait êtr
     gridnumber = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :\n> "))
   return gridnumber
 
+def classement():
+  d = get_players_points()
+  d = sorted(d, key=lambda scores: scores[1],reverse=True)
+  d.insert(0, ("NOM","SCORE"))
+  print(grid(["     CLASSEMENT     "], inner=False))
+  print(grid(d,size=19, inner=False))
+
 def scoreslist(player): #TODO
-  print("\n --- indisponible pour le moment ---\n")
-  main_menu(player)
+  classement()
+  if player.islogged():
+    print("Pour voir vos scores par grille <monscore>")
+  entree = input("Pour retourner au menu : <retour>\n> ")
+  if entree == "retour":
+    main_menu(player)
 
 def newplayer(player):  #OK
   pseudo = input("Pseudo :\n> ")
-  players = player.playernames()
+  players = playernames()
   while (pseudo in players):
     pseudo = input("Désolée, ce nom est déjà pris ... :'( \nPseudo :\n> ")
   player.setname(pseudo)
@@ -176,8 +185,13 @@ def main_menu(player):  #OK
     ["SAUVGARDER LA PARTIE","sauver"],
     ["MEILLEURS SCORES","scores"],
     ["QUITTER","quit"]], inner=False)+"\n> ")
+
+
+
+
   if choixaction == "jouer" :
     start_level(1, player)
+    
   elif choixaction == "choixniveau":
     start_level(gridchoice(player), player)
   elif choixaction == "charger" :
