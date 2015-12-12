@@ -61,28 +61,28 @@ class Start_Level:
     else:
       Start_Level(self.top, self.player, self.ngrid+1)
 
-class Player_Choice:
+class Player_Choice: #---------> OK
   def __init__(self, prev, action):
     self.top = prev.top
     self.prev = prev
     self.players = playernames()
-    self.top.update(self.content)  
     self.player = prev.player
     self.action = action
     self.content = []
     for player in self.players : self.content.append(Button (text=player, command = lambda i=player: self.playerchosen(i)))
-
+    self.top.update(self.content)
+    
   def playerchosen(self, player):
-    self.player = player
+    self.player = Player(player)
     eval(self.action)
     
-class Grid_Choice:
+class Grid_Choice:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
     self.content = []
     for i in range (1,41):
-      self.content.append(Button(text = i, command = lambda : Start_Level(self.top, self.player, 1)))
+      self.content.append(Button(text = i, command = lambda ngrid=i: Start_Level(self.top, self.player, ngrid)))
     self.top.update(self.content)
     
 def classement():
@@ -105,31 +105,29 @@ class Score_List:
     self.player = player
     self.content = None
     self.top.update(self.content)  
-    
-def newplayer(player):  #OK
-  pseudo = input("Pseudo :\n> ")
-  players = playernames()
-  while (pseudo in players):
-    pseudo = input("Désolée, ce nom est déjà pris ... :'( \nPseudo :\n> ")
-  player.setname(pseudo)
 
-class New_Player:
-  def __init__(self, top , player):
-    self.top = top
-    self.player = player
-    self.content = None
+class New_Player:#---------> OK
+  def __init__(self, prev, action):
+    self.top = prev.top
+    self.player = prev.player
+    self.prev = prev
+    self.action = action
+    self.players = playernames()
+    self.e = Entry()
+    self.content = [Label(text="Pseudo :"),
+                    self.e,
+                    Button(text="Valider", command = lambda : self.validate(self.e.get()))]
     self.top.update(self.content)
-
     
   def validate(self, entree):
-    if entree not in self.players:
-      self.top.show_error("Il n'y a pas de joueur de ce nom ... \nQuel est votre pseudo ?\n> ")
+    if entree in self.players:
+      self.top.show_error(" Ce nom est déjà pris ... :( ")
       self.e.delete(0, END)
     else :
-      self.player = Player(entree)
+      self.player.setname(entree)
       eval(self.action)
       
-class Save:
+class Save:#---------> OK
   def __init__(self, prev, action="Main_menu(self.top, self.player)"):
     self.top = prev.top
     self.player = prev.player
@@ -154,13 +152,13 @@ class Save:
     self.player.saveinfile()
     eval(self.action)
 
-class AskForSave:
+class AskForSave:#---------> OK
   def __init__(self, top, player):
     self.top = top
     self.player = player
     self.content = [Label(text="Voulez vous sauvegarder votre partie ?"),
-                    Button(text="oui", command= lambda : Save(self, "self.top.close()")),
-                    Button(text="non", command= lambda : self.top.close())]
+                    Button(text="Oui", command= lambda : Save(self, action = "self.top.close()")),
+                    Button(text="Non", command= lambda : self.top.close())]
     self.top.update(self.content)  
     
 def win_menu(ngrid, player, trials): #OK
@@ -194,7 +192,7 @@ class Win_Menu:
       self.content.append(Button(text = "Grille suivante", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)))
     self.top.update(self.content)  
     
-class Main_menu:
+class Main_menu:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
@@ -242,7 +240,7 @@ class content_window :
   def close(self):
     self.top.destroy()
 
-def main():
+def main():#---------> OK
   # INIT
   fenetre = Tk()
   Main_menu(content_window(fenetre), Player())
