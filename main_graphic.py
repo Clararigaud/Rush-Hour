@@ -102,9 +102,15 @@ def scoreslist(player): #TODO
 class Score_List:
   def __init__(self, top , player):
     self.top = top
+    self.d = sorted(get_players_points(), key=lambda scores: scores[1],reverse=True)
     self.player = player
-    self.content = None
-    self.top.update(self.content)  
+    self.content = []
+    i = 1
+    for item in self.d:
+      self.content.append(Label(text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points"))
+      i+=1
+    self.content.append(Button(text="Retour", command = lambda : Main_menu(self.top, self.player)))  
+    self.top.update(self.content)
 
 class New_Player:#---------> OK
   def __init__(self, prev, action):
@@ -183,8 +189,7 @@ class Win_Menu:
     self.top = top
     self.player = player
     self.ngrid = ngrid
-    self.trials = trials
-    
+    self.trials = trials   
     self.content = [Label(text="Winner !  \nNombre de coups :" + self.trials),
                     Button(text = "Choisir une grille", command = lambda : Grid_Choice(self.top, self.player)),
                     Button(text = "Menu principal", command = lambda : Main_menu(self.top, self.player))]
