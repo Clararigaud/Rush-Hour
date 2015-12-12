@@ -9,7 +9,7 @@ __usage__   = """"""
 from car import *
 import json
 # ------------------------------------------------------------------------------
-class Grid:
+class Grille:
 
   def __init__(self, ngrid):
     gdicts = json.load(open('grilles.json'))

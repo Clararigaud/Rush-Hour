@@ -24,7 +24,7 @@ def error_msg(code):
    
 def start_level(ngrid, player):
   """ Boucle pour un niveau de jeu"""
-  gameGrid = Grid(ngrid)
+  gameGrid = Grille(ngrid)
   trials = 0              #trials iterator
   while(True):
     trials +=1            #à chaque tour de boucle, un essai supplémentaire 
