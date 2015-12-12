@@ -66,23 +66,16 @@ class Player_Choice:
     self.top = prev.top
     self.prev = prev
     self.players = playernames()
-    self.content = []
-    for player in self.players : self.content.append(Label(text= player))
-    self.e = Entry()
-    self.content.append(self.e)
-    self.content.append(Button(text="Valider",command= lambda : self.validate(self.e.get())))
     self.top.update(self.content)  
     self.player = prev.player
     self.action = action
+    self.content = []
+    for player in self.players : self.content.append(Button (text=player, command = lambda i=player: self.playerchosen(i)))
 
-  def validate(self, entree):
-    if entree not in self.players:
-      self.top.show_error("Il n'y a pas de joueur de ce nom ... \nQuel est votre pseudo ?\n> ")
-      self.e.delete(0, END)
-    else :
-      self.player = Player(entree)
-      eval(self.action)
-
+  def playerchosen(self, player):
+    self.player = player
+    eval(self.action)
+    
 class Grid_Choice:
   def __init__(self, cw, player):
     self.top = cw
@@ -125,8 +118,17 @@ class New_Player:
     self.top = top
     self.player = player
     self.content = None
-    self.top.update(self.content)  
+    self.top.update(self.content)
+
     
+  def validate(self, entree):
+    if entree not in self.players:
+      self.top.show_error("Il n'y a pas de joueur de ce nom ... \nQuel est votre pseudo ?\n> ")
+      self.e.delete(0, END)
+    else :
+      self.player = Player(entree)
+      eval(self.action)
+      
 class Save:
   def __init__(self, prev, action="Main_menu(self.top, self.player)"):
     self.top = prev.top
