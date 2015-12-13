@@ -278,7 +278,7 @@ class Minigridbutton(Button):
     playedchar = ""
     if played:
       playedchar="p"
-    stri = "images/minigrille-"+str(grid)+str(playedchar)+".png"
+    stri = "images/minigrille-"+str(grid)+str(playedchar)+".gif"
     self.photo=PhotoImage(file=stri)
     Button.__init__(self,  
                     height=58,
