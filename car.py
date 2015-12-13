@@ -1,12 +1,10 @@
 # ==============================================================================
-"""BINO : compute the binomial coefficient C(n,p)"""
+"""RUSH HOUR : get your car out of this mess !"""
 # ==============================================================================
-__author__  = "Christophe Schlick"
-__version__ = "2.0" # use 'for' loop to generate string
-__date__    = "2015-09-01"
-__usage__   = """
-User input: <n>, <p> (where n:int > 0, p:int >=0)
-App output: binomial coefficient C(n,p)"""
+__author__  = "Gwladys Léré, Clara Rigaud"
+__version__ = "3.0"
+__date__    = "2015-12-13"
+__usage__   = """"""
 # ==============================================================================
 from ezCLI import *
 # ------------------------------------------------------------------------------
