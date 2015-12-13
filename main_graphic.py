@@ -220,7 +220,7 @@ class Main_menu:
     
 class content_window :
   def __init__(self, top):
-    self.photo=PhotoImage(file="images/rushhour.png")
+    self.photo=PhotoImage(file="images/rushhour.gif")
     self.header = Label(image = self.photo, bg="#FFF")
     self.body = None
     self.top = top
@@ -278,8 +278,13 @@ class Minigridbutton(Button):
     playedchar = ""
     if played:
       playedchar="p"
+<<<<<<< HEAD
     stri = "images/minigrille-"+str(grid)+str(playedchar)+".png"
     self.photo=PhotoImage(file=stri)
+=======
+    #photo=PhotoImage(file="images/minigrille-"+grid+playedchar+".png")
+    self.photo=PhotoImage(file="images/minigrille-1.gif")
+>>>>>>> dfe50931c821cba8bdca4a5c13c854a25604e17f
     Button.__init__(self,  
                     height=58,
                     width = 58,
