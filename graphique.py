@@ -20,7 +20,7 @@ class Graphic:
       self.player = player
       self.grid = grid
       self.nb_blocs = 6
-      self.largeur_bloc = 50
+      self.largeur_bloc = 90
       self.fenetre = window.top
       self.window = window
       self.trials = 0

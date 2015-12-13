@@ -249,11 +249,12 @@ class Menubutton(Button):
     
 class RushLabel(Label):
   def __init__(self, *args, **kwargs):
-    Label.__init__(self, *args, **kwargs,
+    Label.__init__(self, 
                    height=2,
                    fg = "#333",
                    bg = "#fff",
-                   font =("Courier", 20))
+                   font =("Courier", 20),
+                   *args, **kwargs)
                    
                   
 
