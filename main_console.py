@@ -90,9 +90,10 @@ def gridchoice(player):  #OK
     if i==40:
       print("EXPERT")
       print(grid([display[0][30:40],display[1][30:40]], size=3))
-  while str(gridnumber) not in mapNum:
-    gridnumber = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :\n> "))
-  return gridnumber
+      
+  while gridnumber not in mapNum:
+    gridnumber = input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :\n> ")
+  return int(gridnumber)
 
 
 def classement():
@@ -108,11 +109,10 @@ def scoreslist(player): #TODO
   """Affichage du classement et retour"""
   assert isinstance(player, type(player)), "<player> must be of type player"
   classement()
-##  if player.islogged():
-##    print("Pour voir vos scores par grille <monscore>")
-  entree = input("Pour retourner au menu : <retour>\n> ")
-  if entree == "retour":
-    main_menu(player)
+  entree = ""
+  while entree != "retour": 
+    entree = input("Pour retourner au menu : <retour>\n> ")
+  main_menu(player)
 
 
 def newplayer(player):  #OK
