@@ -31,15 +31,16 @@ class Start_Level:
     self.top = top
     self.player = player
     self.gameGrid = Grille(self.ngrid)
-    graphGrid = Graphic(self.gameGrid,top.top) 
+    graphGrid = Graphic(self.gameGrid,self.top.top) 
     self.content = [Label(text="GRILLE " + str(self.gameGrid.key)),
                     graphGrid.canvas,
                     Button(text="Niveau suivant", command = lambda : self.skip()),
                     Button(text="Menu principal", command = lambda : Main_menu(self.top, self.player)),
                     Button(text="Changer de niveau", command = lambda : Grid_Choice(self.top, self.player))]
                     
-    self.trials = 0              #trials iterator
+    self.trials = graphGrid.trials              #trials iterator
     self.top.update(self.content)
+    
 ##    while(True):
 ##      command = ""
 ##      while len(command) != 2: #redemande tant que l'utilisateur ne rentre pas 2 lettres
