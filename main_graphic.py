@@ -13,19 +13,7 @@ import graphique
 from players import *
 from tkinter import *
 
-# ------------------------------------------------------------------------------
-
-def error_msg(code):
-  """ methode d'affichage des messages d'erreur """
-  assert isinstance(code, (str)), "<code> must be an str"
-  if code == "outofstreet":
-    print("Il faut rester sur la route !")
-  elif code == "occupied":
-    print("Deja une voiture ici !")
-  elif code == "wrongdir":
-    print("Cette voiture ne peut pas rouler dans cette direction")
-  elif code == "nocar":
-    print("Il n'y a pas de voiture de ce nom")
+# -----------------------------------------------------------------------------
          
 class Start_Level:
   def __init__(self, top , player , ngrid):
@@ -35,34 +23,18 @@ class Start_Level:
     self.gameGrid = Grille(self.ngrid)
 
     graphGrid = graphique.Graphic(self.gameGrid, self.top, player, ngrid)
-    self.content = [RushLabel(text="GRILLE " + str(self.gameGrid.key)),
-                    graphGrid.canvas,
-                    Menubutton(text="NIVEAU SUIVANT", command = lambda : self.skip()),
-                    Menubutton(text="MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)),
-                    Menubutton(text="CHANGER DE NIVEAU", command = lambda : Grid_Choice(self.top, self.player))]
+    self.content = Frame(bg="#fff")
+    self.content.pack()
+    self.top.update(self.content)
+    RushLabel(self.content, text="GRILLE " + str(self.gameGrid.key)).pack()
+    graphGrid.canvas.pack()
+    Menubutton(self.content, text="NIVEAU SUIVANT", command = lambda : self.skip()).pack()
+    Menubutton(self.content, text="MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)).pack()
+    Menubutton(self.content, text="CHANGER DE NIVEAU", command = lambda : Grid_Choice(self.top, self.player)).pack()
                     
     self.trials = graphGrid.trials              #trials iterator
     self.top.update(self.content)
-    
-##    while(True):
-##      command = ""
-##      while len(command) != 2: #redemande tant que l'utilisateur ne rentre pas 2 lettres
-##        command = input("Entrez le mouvement (nom de la voiture et nom de la direction en anglais (ex: ZU, ZD, ZL, ZR)) : \n OP pour acceder aux options\n> ")
-##      carName = command[0].upper()
-##      direc = command[1].upper()
-##      if carName in gameGrid.cars:
-##        car = gameGrid.cars[carName]  #Vérifie si le nom entré par l'utilisateur correspond bien à une voiture
-##      else:
-##        car = None #si l'utilisateur n'a pas écrit le nom d'une voiture sur la grille, vaut None
-##        result = gameGrid.move(car, direc) #renvoie une str avec le nom de l'erreur s'il y en a
-##        error_msg(result)
-##        if result == "win":
-##          Win_Menu(self.top, self.player, self.ngrid, self.trials)
-##          break
-##      self.trials +=1            #à chaque tour de boucle, un essai supplémentaire
-##
-
-#class carscale(scale)    
+   
   def skip(self):
     if self.ngrid == 40 :
       Main_menu(self.top, self.player)
@@ -75,37 +47,70 @@ class Player_Choice: #---------> OK
     self.prev = prev
     self.players = playernames()
     self.player = prev.player
-    self.action = action
-    self.content = []
-    for player in self.players : self.content.append(Menubutton (text=player, command = lambda i=player: self.playerchosen(i)))
+    self.action = action   
+    self.content = Frame(bg="#fff")
+    self.content.pack()
     self.top.update(self.content)
+    
+    for player in self.players : Menubutton (self.content, text=player, command = lambda i=player: self.playerchosen(i)).pack()
     
   def playerchosen(self, player):
     self.player = Player(player)
     eval(self.action)
-    
+
 class Grid_Choice:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
-    self.content = []
-    for i in range (1,41):
-      self.content.append(Button(text = i, command = lambda ngrid=i: Start_Level(self.top, self.player, ngrid)))
-    self.content.append(Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player)))  
+    self.content = Frame(bg="#fff")
+    self.content.pack()
     self.top.update(self.content)
-    
+    lines = []
+    cases=[]
+    scores=[]
+    for j in range(0,4):
+      cases.append([])
+      scores.append([])
+      if j == 0:
+        RushLabel(self.content,text="FACILE").pack()
+      elif j==1:
+        RushLabel(self.content,text="MOYEN").pack()
+      elif j==2:
+        RushLabel(self.content,text="DIFFICILE").pack()
+      elif j==3:
+        RushLabel(self.content,text="EXPERT").pack()      
+      lines.append(Frame(self.content, bg="#fff"))
+      lines[j].pack()    
+      for i in range (j*10+1,(j+1)*10+1):
+        scores[j].append([])
+        if player.hasplayed(i):
+          played = True
+          scores[j][i-1-10*j]= str(player.get_player_grid_score(i))+" moves"
+        else :
+          played = False
+          scores[j][i-1-10*j]=""
+
+        cases[j].append([])
+        cases[j][i-1-10*j]=(Frame(lines[j], width = 58, height = 70, bg="#fff"))
+        cases[j][i-1-10*j].pack(side=LEFT)
+        Minigridbutton(i, played, cases[j][i-1-10*j],command = lambda ngrid=i: Start_Level(self.top, self.player, ngrid)).pack(padx=10)
+        Label(cases[j][i-1-10*j], text= scores[j][i-1-10*j], bg="#fff", font=("courrier",9)).pack()
+    Menubutton(self.content, text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
+
 class Score_List:#---------> OK
   def __init__(self, top , player):
     self.top = top
     self.d = sorted(get_players_points(), key=lambda scores: scores[1],reverse=True)
     self.player = player
-    self.content = []
+    self.content = Frame(bg="#fff")
+    self.content.pack()
+    self.top.update(self.content)
+    
     i = 1
     for item in self.d:
-      self.content.append(RushLabel(text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points"))
+      RushLabel(self.content, text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points").pack()
       i+=1
-    self.content.append(Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player)))  
-    self.top.update(self.content)
+    Menubutton(self.content, text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
 
 class New_Player:#---------> OK
   def __init__(self, prev, action):
@@ -114,12 +119,16 @@ class New_Player:#---------> OK
     self.prev = prev
     self.action = action
     self.players = playernames()
-    self.e = Entry()
-    self.content = [RushLabel(text="Pseudo :"),
-                    self.e,
-                    Menubutton(text="VALIDER", command = lambda : self.validate(self.e.get())),
-                    Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player))]
+    
+    self.content = Frame(bg="#fff")
+    self.content.pack()
     self.top.update(self.content)
+    self.e = Entry(self.content)
+    RushLabel(self.content, text="Pseudo :")
+    self.e.pack()
+    Menubutton(self.content,text="VALIDER", command = lambda : self.validate(self.e.get())).pack()
+    Menubutton(self.content,text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
+
     
   def validate(self, entree):
     if entree in self.players:
@@ -137,10 +146,13 @@ class Save:#---------> OK
     if self.player.islogged():
       self.saveandleave()
     else:
-      self.content = [RushLabel(text="Avez-vous déjà une partie d'enregistrée?"),
-                      Menubutton(text="OUI", command= lambda : self.getexisting()),
-                      Menubutton(text="NON", command= lambda :  self.getnew())]
+      self.content =Frame(bg="#fff")
+      self.content.pack()
       self.top.update(self.content)
+      RushLabel(self.content, text="Avez-vous déjà une partie d'enregistrée?").pack()
+      Menubutton(self.content, text="OUI", command= lambda : self.getexisting()).pack()
+      Menubutton(self.content, text="NON", command= lambda :  self.getnew()).pack()
+
       
   def getexisting(self):
     Player_Choice(self, "self.prev.syncandsave(self.player)")
@@ -160,10 +172,13 @@ class AskForSave:#---------> OK
   def __init__(self, top, player):
     self.top = top
     self.player = player
-    self.content = [RushLabel(text="Voulez vous sauvegarder votre partie ?"),
-                    Menubutton(text="OUI", command= lambda : Save(self, action = "self.top.close()")),
-                    Menubutton(text="NON", command= lambda : self.top.close())]
-    self.top.update(self.content)  
+    self.content = Frame(bg="#fff")
+    self.content.pack()
+    self.top.update(self.content)
+    RushLabel(self.content,text="Voulez vous sauvegarder votre partie ?").pack()
+    Menubutton(self.content,text="OUI", command= lambda : Save(self, action = "self.top.close()")).pack()
+    Menubutton(self.content,text="NON", command= lambda : self.top.close()).pack()
+  
     
 class Win_Menu:#---------> OK
   def __init__(self, top , player, ngrid, trials):
@@ -171,25 +186,30 @@ class Win_Menu:#---------> OK
     self.player = player
     self.ngrid = ngrid
     self.trials = trials   
-    self.content = [RushLabel(text="Winner !  \nNombre de coups : %i" % self.trials),
-                    Menubutton(text = "CHOISIR UNE GRILLE", command = lambda : Grid_Choice(self.top, self.player)),
-                    Menubutton(text = "MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player))]
+    self.content = Frame(bg="#fff")
+    self.content.pack()
+    self.top.update(self.content)
+
+    RushLabel(self.content, text="Winner !  \nNombre de coups : %i" % self.trials).pack()
+    Menubutton(self.content, text = "CHOISIR UNE GRILLE", command = lambda : Grid_Choice(self.top, self.player)).pack()
+    Menubutton(self.content, text = "MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)).pack()
 
     if (ngrid != 40):
-      self.content.append(Menubutton(text = "GRILLE SUIVANTE", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)))
-    self.top.update(self.content)  
+      Menubutton(self.content, text = "GRILLE SUIVANTE", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)).pack() 
     
 class Main_menu:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
-    self.content = [Menubutton (text= "JOUER", command = lambda : Start_Level(self.top, self.player, 1)),
-                    Menubutton (text= "CHOISIR UN NIVEAU", command = lambda : Grid_Choice(self.top, self.player)),
-                    Menubutton (text= "CHARGER UNE PARTIE", command = self.loadplayer_callback),
-                    Menubutton (text= "SAUVEGARDER", command = lambda : Save(self)),
-                    Menubutton (text= "MEILLEURS SCORES", command = lambda : Score_List(self.top,self.player)),
-                    Menubutton (text= "QUITTER", command = lambda : self.quit_callback())]
-    self.top.update(self.content)  
+    self.content = Frame()
+    self.content.pack()
+    Menubutton (self.content, text= "JOUER", command = lambda : Start_Level(self.top, self.player, 1)).pack()
+    Menubutton (self.content, text= "CHOISIR UN NIVEAU", command = lambda : Grid_Choice(self.top, self.player)).pack()
+    Menubutton (self.content, text= "CHARGER UNE PARTIE", command = self.loadplayer_callback).pack()
+    Menubutton (self.content, text= "SAUVEGARDER", command = lambda : Save(self)).pack()
+    Menubutton (self.content, text= "MEILLEURS SCORES", command = lambda : Score_List(self.top,self.player)).pack()
+    Menubutton (self.content, text= "QUITTER", command = lambda : self.quit_callback()).pack()
+    self.top.update(self.content)
       
   def loadplayer_callback(self):
     Player_Choice(self, "Grid_Choice(self.top, self.player)")
@@ -199,25 +219,23 @@ class Main_menu:#---------> OK
     
 class content_window :
   def __init__(self, top):
-    self.header = Label(text = "RUSH HOUR", font=("Courier", 60, "bold"), fg="#333", bg="#FFF")
+    self.header = Label(text = "RUSH HOUR", font=("Courier", 60, "bold"), fg="#333", bg="#FFF", height =2)
     self.body = None
     self.top = top
     self.header.pack()
     self.error = None
   def clear(self):
     if self.body:
-      for item in self.body:
-          item.pack_forget()
+      self.body.pack_forget()
       self.body = None
     if self.error:
       self.error.pack_forget()
       self.error = None
+
   def update(self,content):
     self.clear()
     self.body = content
-    for item in self.body:
-        item.pack()
-
+    
   def show_error(self, string):
     if self.error:
       self.error.pack_forget()
@@ -257,7 +275,27 @@ class RushLabel(Label):
                    *args, **kwargs)
                    
                   
-
+class Minigridbutton(Button):
+  def __init__(self, grid, played, *args, **kwargs):
+    playedchar = ""
+    if played:
+      playedchar="p"
+    #photo=PhotoImage(file="images/minigrille-"+grid+playedchar+".png")
+    self.photo=PhotoImage(file="images/minigrille-1.png")
+    Button.__init__(self,  
+                    height=58,
+                    width = 58,
+                    image=self.photo,
+                    fg = "#333",
+                    activeforeground = "#F55",
+                    bg = "#fff",
+                    activebackground="#fff",
+                    font =("Courier", 20),
+                    
+                    overrelief = FLAT,
+                    highlightthickness=0,
+                    borderwidth=0,
+                    *args, **kwargs)
     
 def main():#---------> OK
   # INIT
