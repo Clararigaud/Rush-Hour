@@ -23,7 +23,10 @@ def error_msg(code):
     print("Il n'y a pas de voiture de ce nom")
    
 def start_level(ngrid, player):
-  """ Boucle pour un niveau de jeu"""
+  """ Boucle pour un niveau de jeu """
+  assert isinstance(ngrid, (int)), "<ngrid> must be an int"
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   gameGrid = Grille(ngrid)
   trials = 0              #trials iterator
   while(True):
@@ -48,9 +51,12 @@ def start_level(ngrid, player):
       if result == "win":
         win_menu(ngrid, player, trials)
         break
+
         
 def playerchoice(player): #OK
   """charger un joueur existant, renvoie l'objet joueur associé au nom entré"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   players = playernames()
   for player in players : print("- "+player) 
   entree = input("Quel est votre pseudo ? \n> ")
@@ -58,8 +64,10 @@ def playerchoice(player): #OK
     entree = input("Il n'y a pas de joueur de ce nom ... \nQuel est votre pseudo ?\n> ")
   return Player(entree)
   
-def gridchoice(player):  #OK   #implémenter une option retourmenu pourrait être cool
+def gridchoice(player):  #OK   
   """ Permet à l'utilisateur de choisir une grille, renvoie le numero de grille choisi """
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   mapNum = ["%s" %i for i in range(1,41)]
   gridnumber=0
   display = [[],[]]
@@ -82,33 +90,46 @@ def gridchoice(player):  #OK   #implémenter une option retourmenu pourrait êtr
     if i==40:
       print("EXPERT")
       print(grid([display[0][30:40],display[1][30:40]], size=3))
-  while str(gridnumber) not in mapNum:
-    gridnumber = int(input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :\n> "))
-  return gridnumber
+      
+  while gridnumber not in mapNum:
+    gridnumber = input("Quelle grille souhaitez-vous utiliser? (de 1 à 40) :\n> ")
+  return int(gridnumber)
+
 
 def classement():
+  """Effectue le classement des scores et son affichage"""
   d = get_players_points()
   d = sorted(d, key=lambda scores: scores[1],reverse=True)
   d.insert(0, ("NOM","SCORE"))
   print(grid(["     CLASSEMENT     "], inner=False))
   print(grid(d,size=19, inner=False))
 
+
 def scoreslist(player): #TODO
+  """Affichage du classement et retour"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
   classement()
-  if player.islogged():
-    print("Pour voir vos scores par grille <monscore>")
-  entree = input("Pour retourner au menu : <retour>\n> ")
-  if entree == "retour":
-    main_menu(player)
+  entree = ""
+  while entree != "retour": 
+    entree = input("Pour retourner au menu : <retour>\n> ")
+  main_menu(player)
+
 
 def newplayer(player):  #OK
+  """demande le pseudo et vérifie s'il n'est pas déjà pris pour créer un nouveau joueur"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   pseudo = input("Pseudo :\n> ")
   players = playernames()
   while (pseudo in players):
     pseudo = input("Désolée, ce nom est déjà pris ... :'( \nPseudo :\n> ")
   player.setname(pseudo)
+
   
 def save(player): #OK
+  """Enregistre la partie selon si le joueur à déjà un compte"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   if not(player.islogged()):
     entree = input("Avez vous vous déjà une partie d'enregistrée? <Oui/non>\n> ")
     if entree== "oui":
@@ -118,8 +139,12 @@ def save(player): #OK
       newplayer(player)
   player.saveinfile()
   return True
+
   
 def quitgame(player):  #OK
+  """Sauvegarde la partie ou non avant de quitter"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   entree = input("Voulez vous sauvegarder votre partie ?  <oui>/<non>\n> ")
   if entree == "oui":
     save(player)
@@ -131,6 +156,10 @@ def quitgame(player):  #OK
 
 def win_menu(ngrid, player, trials): #OK
   """ S'affiche lorsqu'une grille est terminée, choix de passer au niveau suivant, choisir un autre niveau ou retourner au menu principal"""
+  assert isinstance(ngrid, (int)), "<ngrid> must be an int"
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  assert isinstance(trials, (int)), "<trials> must be an int"
+  
   print("WINNER !! \nNombre de coups :", trials)
   player.set_player_grid_score(ngrid, trials)
   
@@ -146,8 +175,12 @@ def win_menu(ngrid, player, trials): #OK
   elif entree=="menu":
     main_menu(player)
 
+
 def level_option_menu(player, ngrid):  #OK
   """ Choix de,  retourner au menu principal, sauter le niveau, choisir un autre niveau, retour à la grille"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  assert isinstance(ngrid, (int)), "<ngrid> must be an int"
+  
   choixaction = ""
   while choixaction not in ["menu", "passer", "choixniveau","retour"]:
     choixaction= input(grid(["OPTIONS"], inner=False)+"\n"+
@@ -171,8 +204,11 @@ def level_option_menu(player, ngrid):  #OK
   elif choixaction == "retour":
     return True
 
+
 def main_menu(player):  #OK
   """ Choix de retourner jouer la première grille, choisir un niveau, charger une partie, voir les scores, quitter"""
+  assert isinstance(player, type(player)), "<player> must be of type player"
+  
   print(grid(["     RUSH HOUR     "], inner=False))
   choixaction = ""
   #Verification de saisie
