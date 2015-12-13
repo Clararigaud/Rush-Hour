@@ -34,11 +34,11 @@ class Start_Level:
     self.player = player
     self.gameGrid = Grille(self.ngrid)
     graphGrid = Graphic(self.gameGrid,self.top.top) 
-    self.content = [Label(text="GRILLE " + str(self.gameGrid.key)),
+    self.content = [RushLabel(text="GRILLE " + str(self.gameGrid.key)),
                     graphGrid.canvas,
-                    Button(text="Niveau suivant", command = lambda : self.skip()),
-                    Button(text="Menu principal", command = lambda : Main_menu(self.top, self.player)),
-                    Button(text="Changer de niveau", command = lambda : Grid_Choice(self.top, self.player))]
+                    Menubutton(text="Niveau suivant", command = lambda : self.skip()),
+                    Menubutton(text="Menu principal", command = lambda : Main_menu(self.top, self.player)),
+                    Menubutton(text="Changer de niveau", command = lambda : Grid_Choice(self.top, self.player))]
                     
     self.trials = graphGrid.trials              #trials iterator
     self.top.update(self.content)
@@ -76,7 +76,7 @@ class Player_Choice: #---------> OK
     self.player = prev.player
     self.action = action
     self.content = []
-    for player in self.players : self.content.append(Button (text=player, command = lambda i=player: self.playerchosen(i)))
+    for player in self.players : self.content.append(Menubutton (text=player, command = lambda i=player: self.playerchosen(i)))
     self.top.update(self.content)
     
   def playerchosen(self, player):
@@ -100,9 +100,9 @@ class Score_List:#---------> OK
     self.content = []
     i = 1
     for item in self.d:
-      self.content.append(Label(text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points"))
+      self.content.append(RushLabel(text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points"))
       i+=1
-    self.content.append(Button(text="Retour", command = lambda : Main_menu(self.top, self.player)))  
+    self.content.append(Menubutton(text="Retour", command = lambda : Main_menu(self.top, self.player)))  
     self.top.update(self.content)
 
 class New_Player:#---------> OK
@@ -113,9 +113,9 @@ class New_Player:#---------> OK
     self.action = action
     self.players = playernames()
     self.e = Entry()
-    self.content = [Label(text="Pseudo :"),
+    self.content = [RushLabel(text="Pseudo :"),
                     self.e,
-                    Button(text="Valider", command = lambda : self.validate(self.e.get()))]
+                    Menubutton(text="Valider", command = lambda : self.validate(self.e.get()))]
     self.top.update(self.content)
     
   def validate(self, entree):
@@ -134,7 +134,9 @@ class Save:#---------> OK
     if self.player.islogged():
       self.saveandleave()
     else:
-      self.content = [Label(text="Avez-vous déjà une partie d'enregistrée?"),Button(text="oui", command= lambda : self.getexisting()), Button(text="non", command= lambda :  self.getnew())]
+      self.content = [RushLabel(text="Avez-vous déjà une partie d'enregistrée?"),
+                      Menubutton(text="oui", command= lambda : self.getexisting()),
+                      Menubutton(text="non", command= lambda :  self.getnew())]
       self.top.update(self.content)
       
   def getexisting(self):
@@ -155,9 +157,9 @@ class AskForSave:#---------> OK
   def __init__(self, top, player):
     self.top = top
     self.player = player
-    self.content = [Label(text="Voulez vous sauvegarder votre partie ?"),
-                    Button(text="Oui", command= lambda : Save(self, action = "self.top.close()")),
-                    Button(text="Non", command= lambda : self.top.close())]
+    self.content = [RushLabel(text="Voulez vous sauvegarder votre partie ?"),
+                    Menubutton(text="Oui", command= lambda : Save(self, action = "self.top.close()")),
+                    Menubutton(text="Non", command= lambda : self.top.close())]
     self.top.update(self.content)  
     
 def win_menu(ngrid, player, trials): #OK
@@ -183,9 +185,9 @@ class Win_Menu:
     self.player = player
     self.ngrid = ngrid
     self.trials = trials   
-    self.content = [Label(text="Winner !  \nNombre de coups :" + self.trials),
-                    Button(text = "Choisir une grille", command = lambda : Grid_Choice(self.top, self.player)),
-                    Button(text = "Menu principal", command = lambda : Main_menu(self.top, self.player))]
+    self.content = [RushLabel(text="Winner !  \nNombre de coups :" + self.trials),
+                    MenuButton(text = "Choisir une grille", command = lambda : Grid_Choice(self.top, self.player)),
+                    Menubutton(text = "Menu principal", command = lambda : Main_menu(self.top, self.player))]
     if (ngrid != 40):
       self.content.append(Button(text = "Grille suivante", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)))
     self.top.update(self.content)  
@@ -257,6 +259,16 @@ class Menubutton(Button):
                     highlightthickness=0,
                     borderwidth=0)
     
+class RushLabel(Label):
+  def __init__(self, *args, **kwargs):
+    Label.__init__(self, *args, **kwargs,
+                   height=2,
+                   fg = "#333",
+                   bg = "#fff",
+                   font =("Courier", 20))
+                   
+                  
+
     
 def main():#---------> OK
   # INIT
