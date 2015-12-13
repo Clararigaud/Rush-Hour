@@ -8,6 +8,8 @@ __usage__   = """"""
 # ==============================================================================
 from ezCLI import *
 from grid import *
+from car import *
+from graphique import *
 from players import *
 from tkinter import *
 
@@ -31,14 +33,16 @@ class Start_Level:
     self.top = top
     self.player = player
     self.gameGrid = Grille(self.ngrid)
+    graphGrid = Graphic(self.gameGrid,self.top.top) 
     self.content = [Label(text="GRILLE " + str(self.gameGrid.key)),
-                    Label(text=grid(self.gameGrid.toArray(), size=3)),
+                    graphGrid.canvas,
                     Button(text="Niveau suivant", command = lambda : self.skip()),
                     Button(text="Menu principal", command = lambda : Main_menu(self.top, self.player)),
                     Button(text="Changer de niveau", command = lambda : Grid_Choice(self.top, self.player))]
                     
-    self.trials = 0              #trials iterator
+    self.trials = graphGrid.trials              #trials iterator
     self.top.update(self.content)
+    
 ##    while(True):
 ##      command = ""
 ##      while len(command) != 2: #redemande tant que l'utilisateur ne rentre pas 2 lettres
