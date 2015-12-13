@@ -12,7 +12,9 @@ from car import *
 import graphique
 from players import *
 from tkinter import *
+
 # ------------------------------------------------------------------------------
+
 def error_msg(code):
   """ methode d'affichage des messages d'erreur """
   assert isinstance(code, (str)), "<code> must be an str"
@@ -58,7 +60,8 @@ class Start_Level:
 ##          break
 ##      self.trials +=1            #à chaque tour de boucle, un essai supplémentaire
 ##
-    
+
+#class carscale(scale)    
   def skip(self):
     if self.ngrid == 40 :
       Main_menu(self.top, self.player)
@@ -89,21 +92,7 @@ class Grid_Choice:#---------> OK
       self.content.append(Button(text = i, command = lambda ngrid=i: Start_Level(self.top, self.player, ngrid)))
     self.top.update(self.content)
     
-def classement():
-  d = get_players_points()
-  d = sorted(d, key=lambda scores: scores[1],reverse=True)
-  d.insert(0, ("NOM","SCORE"))
-  print(grid(["     CLASSEMENT     "], inner=False))
-  print(grid(d,size=19, inner=False))
-
-def scoreslist(player): #TODO
-  classement()
-  if player.islogged():
-    entree = input("Pour retourner au menu : <retour>\n> ")
-  if entree == "retour":
-    main_menu(player)
-
-class Score_List:
+class Score_List:#---------> OK
   def __init__(self, top , player):
     self.top = top
     self.d = sorted(get_players_points(), key=lambda scores: scores[1],reverse=True)
@@ -205,12 +194,12 @@ class Main_menu:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
-    self.content = [Button (text= "Jouer", command = lambda : Start_Level(self.top, self.player, 1)),
-                    Button (text= "Choisir un niveau", command = lambda : Grid_Choice(self.top, self.player)),
-                    Button (text= "Charger une partie", command = self.loadplayer_callback),
-                    Button (text= "Sauvegarder la partie", command = lambda : Save(self)),
-                    Button (text= "Meilleurs scores", command = lambda : Score_List(self.top,self.player)),
-                    Button (text= "Quitter", command = lambda : self.quit_callback())]
+    self.content = [Menubutton (text= "Jouer", command = lambda : Start_Level(self.top, self.player, 1)),
+                    Menubutton (text= "Choisir un niveau", command = lambda : Grid_Choice(self.top, self.player)),
+                    Menubutton (text= "Charger une partie", command = self.loadplayer_callback),
+                    Menubutton (text= "Sauvegarder la partie", command = lambda : Save(self)),
+                    Menubutton (text= "Meilleurs scores", command = lambda : Score_List(self.top,self.player)),
+                    Menubutton (text= "Quitter", command = lambda : self.quit_callback())]
     self.top.update(self.content)  
       
   def loadplayer_callback(self):
@@ -221,7 +210,7 @@ class Main_menu:#---------> OK
     
 class content_window :
   def __init__(self, top):
-    self.header = Label(text = "RUSH HOUR")
+    self.header = Label(text = "RUSH HOUR", font=("Courier", 60, "bold"), fg="#333", bg="#FFF")
     self.body = None
     self.top = top
     self.header.pack()
@@ -249,10 +238,35 @@ class content_window :
   def close(self):
     self.top.destroy()
 
+
+
+
+#-----------------------Customized widgets-------------------------#    
+class Menubutton(Button):
+  def __init__(self, *args, **kwargs):
+    Button.__init__(self,  
+                    height=2,
+                    width = 30,
+                    fg = "#333",
+                    activeforeground = "#F55",
+                    bg = "#fff",
+                    activebackground="#fff",
+                    font =("Courier", 20),
+                    relief = FLAT,
+                    overrelief = FLAT,
+                    highlightthickness=0,
+                    borderwidth=0,
+                    *args, **kwargs)
+    
+    
 def main():#---------> OK
   # INIT
   fenetre = Tk()
-  Main_menu(content_window(fenetre), Player())
+  fenetre.geometry("800x800")
+  fenetre.configure(background="#fff")
+  fenetre.title("Rush Hour, by Clara Rigaud and Gwaldys Léré")
+  content = content_window(fenetre)
+  Main_menu(content, Player())
   fenetre.mainloop()
 
   
