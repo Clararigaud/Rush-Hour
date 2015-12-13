@@ -15,14 +15,14 @@ from main_graphic import Win_Menu
 
 class Graphic:
     
-  def __init__(self,grid,window, player, ngrid):
+  def __init__(self,grid, top, window, player, ngrid):
     self.ngrid = ngrid
     self.player = player
     self.grid = grid
     self.nb_blocs = 6
-    self.largeur_bloc = 90
-    self.fenetre = window.top
-    self.window = window
+    self.largeur_bloc = 80
+    self.mainwin = top
+    self.fenetre = window
     self.trials = 0
     self.canvas = Canvas(self.fenetre,bg="grey",height = self.nb_blocs * self.largeur_bloc, width = self.nb_blocs * self.largeur_bloc)
    
@@ -186,7 +186,7 @@ class Graphic:
   def win(self,x1):
     """Vérifie si le joueur a gagné"""
     if x1 == self.nb_blocs*self.largeur_bloc + self.largeur_bloc:
-      Win_Menu(self.window, self.player, self.ngrid, self.trials)
+      Win_Menu(self.mainwin, self.player, self.ngrid, self.trials)
 
 
 ##if __name__ == "__main__":

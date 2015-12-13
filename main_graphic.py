@@ -20,28 +20,28 @@ class Start_Level:
     self.ngrid = ngrid
     self.top = top
     self.player = player
-    self.gameGrid = Grille(self.ngrid)
-
-    graphGrid = graphique.Graphic(self.gameGrid, self.top, player, ngrid)
-    self.content = Frame(bg="#fff")
+    self.gameGrid = Grille(self.ngrid)    
+    self.content = Frame(bg="#fff", width=800)
     self.content.pack()
-    self.top.update(self.content)
-    RushLabel(self.content, text="GRILLE " + str(self.gameGrid.key)).pack()
+    self.header = Frame(self.content,bg="#fff",width=800)
+    self.header.pack()
+    RushLabel(self.header, text="GRILLE " + str(self.gameGrid.key)).pack(side=LEFT,ipadx=100)
+    Menubutton(self.header, text="MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)).pack(side=RIGHT, padx=100)
+    graphGrid = graphique.Graphic(self.gameGrid,self.top, self.content, player, ngrid)
     graphGrid.canvas.pack()
-    Menubutton(self.content, text="NIVEAU SUIVANT", command = lambda : self.skip()).pack()
-    Menubutton(self.content, text="MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)).pack()
-    Menubutton(self.content, text="CHANGER DE NIVEAU", command = lambda : Grid_Choice(self.top, self.player)).pack()
-                    
-    self.trials = graphGrid.trials              #trials iterator
+    self.footer = Frame(self.content,bg="#fff",width=800)
+    self.footer.pack(pady=50)
+    Menubutton(self.footer, text="NIVEAU SUIVANT", command = lambda : self.skip()).pack(side=LEFT,ipadx=30)
+    Menubutton(self.footer, text="CHANGER DE NIVEAU", command = lambda : Grid_Choice(self.top, self.player)).pack(side=RIGHT, padx=30)
     self.top.update(self.content)
-   
+
   def skip(self):
     if self.ngrid == 40 :
       Main_menu(self.top, self.player)
     else:
       Start_Level(self.top, self.player, self.ngrid+1)
 
-class Player_Choice: #---------> OK
+class Player_Choice: 
   def __init__(self, prev, action):
     self.top = prev.top
     self.prev = prev
@@ -53,12 +53,12 @@ class Player_Choice: #---------> OK
     self.top.update(self.content)
     
     for player in self.players : Menubutton (self.content, text=player, command = lambda i=player: self.playerchosen(i)).pack()
-    
+    Menubutton(self.content, text="ANNULER", command = lambda : Main_menu(self.top, self.player)).pack()
   def playerchosen(self, player):
     self.player = Player(player)
     eval(self.action)
 
-class Grid_Choice:#---------> OK
+class Grid_Choice:
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
@@ -97,7 +97,7 @@ class Grid_Choice:#---------> OK
         Label(cases[j][i-1-10*j], text= scores[j][i-1-10*j], bg="#fff", font=("courrier",9)).pack()
     Menubutton(self.content, text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
 
-class Score_List:#---------> OK
+class Score_List:
   def __init__(self, top , player):
     self.top = top
     self.d = sorted(get_players_points(), key=lambda scores: scores[1],reverse=True)
@@ -112,7 +112,7 @@ class Score_List:#---------> OK
       i+=1
     Menubutton(self.content, text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
 
-class New_Player:#---------> OK
+class New_Player:
   def __init__(self, prev, action):
     self.top = prev.top
     self.player = prev.player
@@ -121,13 +121,13 @@ class New_Player:#---------> OK
     self.players = playernames()
     
     self.content = Frame(bg="#fff")
-    self.content.pack()
+    self.content.pack(pady=50)
     self.top.update(self.content)
-    self.e = Entry(self.content)
-    RushLabel(self.content, text="Pseudo :")
+    self.e = Entry(self.content,justify=CENTER,font=("Courier",30), bg="#fff")
+    RushLabel(self.content, text="Pseudo :").pack()
     self.e.pack()
     Menubutton(self.content,text="VALIDER", command = lambda : self.validate(self.e.get())).pack()
-    Menubutton(self.content,text="RETOUR", command = lambda : Main_menu(self.top, self.player)).pack()
+    Menubutton(self.content,text="ANNULER", command = lambda : Main_menu(self.top, self.player)).pack()
 
     
   def validate(self, entree):
@@ -138,7 +138,7 @@ class New_Player:#---------> OK
       self.player.setname(entree)
       eval(self.action)
       
-class Save:#---------> OK
+class Save:
   def __init__(self, prev, action="Main_menu(self.top, self.player)"):
     self.top = prev.top
     self.player = prev.player
@@ -168,7 +168,7 @@ class Save:#---------> OK
     self.player.saveinfile()
     eval(self.action)
 
-class AskForSave:#---------> OK
+class AskForSave:
   def __init__(self, top, player):
     self.top = top
     self.player = player
@@ -180,7 +180,7 @@ class AskForSave:#---------> OK
     Menubutton(self.content,text="NON", command= lambda : self.top.close()).pack()
   
     
-class Win_Menu:#---------> OK
+class Win_Menu:
   def __init__(self, top , player, ngrid, trials):
     self.top = top
     self.player = player
@@ -190,18 +190,19 @@ class Win_Menu:#---------> OK
     self.content.pack()
     self.top.update(self.content)
 
-    RushLabel(self.content, text="Winner !  \nNombre de coups : %i" % self.trials).pack()
+    Label(self.content, text="Winner !", height=3,fg = "#333", bg = "#fff",font =("Courier", 40)).pack()
+    RushLabel(self.content, text="Nombre de coups : %i" % self.trials).pack()
     Menubutton(self.content, text = "CHOISIR UNE GRILLE", command = lambda : Grid_Choice(self.top, self.player)).pack()
     Menubutton(self.content, text = "MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)).pack()
 
     if (ngrid != 40):
       Menubutton(self.content, text = "GRILLE SUIVANTE", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)).pack() 
     
-class Main_menu:#---------> OK
+class Main_menu:
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
-    self.content = Frame()
+    self.content = Frame(bg="#fff")
     self.content.pack()
     Menubutton (self.content, text= "JOUER", command = lambda : Start_Level(self.top, self.player, 1)).pack()
     Menubutton (self.content, text= "CHOISIR UN NIVEAU", command = lambda : Grid_Choice(self.top, self.player)).pack()
@@ -219,7 +220,8 @@ class Main_menu:#---------> OK
     
 class content_window :
   def __init__(self, top):
-    self.header = Label(text = "RUSH HOUR", font=("Courier", 60, "bold"), fg="#333", bg="#FFF", height =2)
+    self.photo=PhotoImage(file="images/rushhour.png")
+    self.header = Label(image = self.photo, bg="#FFF")
     self.body = None
     self.top = top
     self.header.pack()
@@ -245,15 +247,11 @@ class content_window :
   def close(self):
     self.top.destroy()
 
-
-
-
 #-----------------------Customized widgets-------------------------#    
 class Menubutton(Button):
   def __init__(self, *args, **kwargs):
     Button.__init__(self,  
                     height=2,
-                    width = 30,
                     fg = "#333",
                     activeforeground = "#F55",
                     bg = "#fff",
@@ -300,7 +298,7 @@ class Minigridbutton(Button):
 def main():#---------> OK
   # INIT
   fenetre = Tk()
-  fenetre.geometry("800x800")
+  fenetre.geometry("800x900")
   fenetre.configure(background="#fff")
   fenetre.title("Rush Hour, by Clara Rigaud and Gwaldys Léré")
   content = content_window(fenetre)
