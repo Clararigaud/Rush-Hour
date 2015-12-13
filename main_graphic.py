@@ -37,9 +37,9 @@ class Start_Level:
     graphGrid = graphique.Graphic(self.gameGrid, self.top, player, ngrid)
     self.content = [RushLabel(text="GRILLE " + str(self.gameGrid.key)),
                     graphGrid.canvas,
-                    Menubutton(text="Niveau suivant", command = lambda : self.skip()),
-                    Menubutton(text="Menu principal", command = lambda : Main_menu(self.top, self.player)),
-                    Menubutton(text="Changer de niveau", command = lambda : Grid_Choice(self.top, self.player))]
+                    Menubutton(text="NIVEAU SUIVANT", command = lambda : self.skip()),
+                    Menubutton(text="MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player)),
+                    Menubutton(text="CHANGER DE NIVEAU", command = lambda : Grid_Choice(self.top, self.player))]
                     
     self.trials = graphGrid.trials              #trials iterator
     self.top.update(self.content)
@@ -91,6 +91,7 @@ class Grid_Choice:#---------> OK
     self.content = []
     for i in range (1,41):
       self.content.append(Button(text = i, command = lambda ngrid=i: Start_Level(self.top, self.player, ngrid)))
+    self.content.append(Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player)))  
     self.top.update(self.content)
     
 class Score_List:#---------> OK
@@ -103,7 +104,7 @@ class Score_List:#---------> OK
     for item in self.d:
       self.content.append(RushLabel(text=str(i) + ". " + str(item[0]) +" : " +str(item[1]) + " points"))
       i+=1
-    self.content.append(Menubutton(text="Retour", command = lambda : Main_menu(self.top, self.player)))  
+    self.content.append(Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player)))  
     self.top.update(self.content)
 
 class New_Player:#---------> OK
@@ -116,7 +117,8 @@ class New_Player:#---------> OK
     self.e = Entry()
     self.content = [RushLabel(text="Pseudo :"),
                     self.e,
-                    Menubutton(text="Valider", command = lambda : self.validate(self.e.get()))]
+                    Menubutton(text="VALIDER", command = lambda : self.validate(self.e.get())),
+                    Menubutton(text="RETOUR", command = lambda : Main_menu(self.top, self.player))]
     self.top.update(self.content)
     
   def validate(self, entree):
@@ -136,8 +138,8 @@ class Save:#---------> OK
       self.saveandleave()
     else:
       self.content = [RushLabel(text="Avez-vous déjà une partie d'enregistrée?"),
-                      Menubutton(text="oui", command= lambda : self.getexisting()),
-                      Menubutton(text="non", command= lambda :  self.getnew())]
+                      Menubutton(text="OUI", command= lambda : self.getexisting()),
+                      Menubutton(text="NON", command= lambda :  self.getnew())]
       self.top.update(self.content)
       
   def getexisting(self):
@@ -159,51 +161,34 @@ class AskForSave:#---------> OK
     self.top = top
     self.player = player
     self.content = [RushLabel(text="Voulez vous sauvegarder votre partie ?"),
-                    Menubutton(text="Oui", command= lambda : Save(self, action = "self.top.close()")),
-                    Menubutton(text="Non", command= lambda : self.top.close())]
+                    Menubutton(text="OUI", command= lambda : Save(self, action = "self.top.close()")),
+                    Menubutton(text="NON", command= lambda : self.top.close())]
     self.top.update(self.content)  
     
-def win_menu(ngrid, player, trials): #OK
-  """ S'affiche lorsqu'une grille est terminée, choix de passer au niveau suivant, choisir un autre niveau ou retourner au menu principal"""
-  print("WINNER !! \nNombre de coups :", trials)
-  player.set_player_grid_score(ngrid, trials)
-  
-  if (ngrid == 40):
-    entree = input("Bravo ! Vous avez terminé le jeu !\n" + grid([["CHOISIR UN NIVEAU","choixniveau"],["MENU PRINCIPAL","menu"]]) + "\n>") 
-  else:
-    entree = input(grid([["GRILLE SUIVANTE","next"],["CHOISIR UN NIVEAU","choixniveau"],["MENU PRINCIPAL","menu"]]) +"\n> ")
-
-  if entree=="next":
-    start_level(ngrid+1, player)
-  elif entree=="choixniveau":
-    start_level(gridchoice(player), player)
-  elif entree=="menu":
-    main_menu(player)
-    
-class Win_Menu:
+class Win_Menu:#---------> OK
   def __init__(self, top , player, ngrid, trials):
     self.top = top
     self.player = player
     self.ngrid = ngrid
     self.trials = trials   
     self.content = [RushLabel(text="Winner !  \nNombre de coups : %i" % self.trials),
-                    MenuButton(text = "Choisir une grille", command = lambda : Grid_Choice(self.top, self.player)),
-                    Menubutton(text = "Menu principal", command = lambda : Main_menu(self.top, self.player))]
+                    Menubutton(text = "CHOISIR UNE GRILLE", command = lambda : Grid_Choice(self.top, self.player)),
+                    Menubutton(text = "MENU PRINCIPAL", command = lambda : Main_menu(self.top, self.player))]
 
     if (ngrid != 40):
-      self.content.append(Button(text = "Grille suivante", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)))
+      self.content.append(Menubutton(text = "GRILLE SUIVANTE", command = lambda : Start_Level(self.top, self.player, self.ngrid+1)))
     self.top.update(self.content)  
     
 class Main_menu:#---------> OK
   def __init__(self, cw, player):
     self.top = cw
     self.player = player
-    self.content = [Menubutton (text= "Jouer", command = lambda : Start_Level(self.top, self.player, 1)),
-                    Menubutton (text= "Choisir un niveau", command = lambda : Grid_Choice(self.top, self.player)),
-                    Menubutton (text= "Charger une partie", command = self.loadplayer_callback),
-                    Menubutton (text= "Sauvegarder la partie", command = lambda : Save(self)),
-                    Menubutton (text= "Meilleurs scores", command = lambda : Score_List(self.top,self.player)),
-                    Menubutton (text= "Quitter", command = lambda : self.quit_callback())]
+    self.content = [Menubutton (text= "JOUER", command = lambda : Start_Level(self.top, self.player, 1)),
+                    Menubutton (text= "CHOISIR UN NIVEAU", command = lambda : Grid_Choice(self.top, self.player)),
+                    Menubutton (text= "CHARGER UNE PARTIE", command = self.loadplayer_callback),
+                    Menubutton (text= "SAUVEGARDER", command = lambda : Save(self)),
+                    Menubutton (text= "MEILLEURS SCORES", command = lambda : Score_List(self.top,self.player)),
+                    Menubutton (text= "QUITTER", command = lambda : self.quit_callback())]
     self.top.update(self.content)  
       
   def loadplayer_callback(self):
