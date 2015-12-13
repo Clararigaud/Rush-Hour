@@ -9,7 +9,7 @@ __usage__   = """"""
 from ezCLI import *
 from grid import *
 from car import *
-from graphique import *
+import graphique
 from players import *
 from tkinter import *
 # ------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ class Start_Level:
     self.top = top
     self.player = player
     self.gameGrid = Grille(self.ngrid)
-    graphGrid = Graphic(self.gameGrid,self.top.top) 
+    graphGrid = graphique.Graphic(self.gameGrid, self.top, player, ngrid)
     self.content = [Label(text="GRILLE " + str(self.gameGrid.key)),
                     graphGrid.canvas,
                     Button(text="Niveau suivant", command = lambda : self.skip()),
@@ -194,7 +194,7 @@ class Win_Menu:
     self.player = player
     self.ngrid = ngrid
     self.trials = trials   
-    self.content = [Label(text="Winner !  \nNombre de coups :" + self.trials),
+    self.content = [Label(text="Winner !  \nNombre de coups : %i" % self.trials),
                     Button(text = "Choisir une grille", command = lambda : Grid_Choice(self.top, self.player)),
                     Button(text = "Menu principal", command = lambda : Main_menu(self.top, self.player))]
     if (ngrid != 40):

@@ -9,16 +9,20 @@ __usage__   = """"""
 from tkinter import *
 from grid import *
 from car import *
+from main_graphic import Win_Menu
 
 # ------------------------------------------------------------------------------
 
 class Graphic:
     
-  def __init__(self,grid,window):
+  def __init__(self,grid,window, player, ngrid):
+      self.ngrid = ngrid
+      self.player = player
       self.grid = grid
       self.nb_blocs = 6
       self.largeur_bloc = 50
-      self.fenetre = window
+      self.fenetre = window.top
+      self.window = window
       self.trials = 0
       #self.textCar = {}
       self.canvas = Canvas(self.fenetre,bg="grey",height = self.nb_blocs * self.largeur_bloc,width = self.nb_blocs * self.largeur_bloc)
@@ -53,7 +57,7 @@ class Graphic:
           #(self.car[key],self.bitmaps[key]) = self.cars(grid.cars[key])
           self.car[key] = self.cars(grid.cars[key])
       print(self.car["A"])
-      
+
       self.canvas.focus_set()
       self.canvas.bind("<Button-1>",self.clic)
     
@@ -197,8 +201,8 @@ class Graphic:
   def win(self,x1):
     if x1 == self.nb_blocs*self.largeur_bloc + self.largeur_bloc:
       self.win == True
-      
-      #self.canvas.create_window(0,0,36,36,text = "vous avez gagné!")
+      Win_Menu(self.window, self.player, self.ngrid, self.trials)
+      #self.canvas.create_window(0,36,text = "vous avez gagné!")
 
 ##  def textCarMove(self,key,move):
 ##    x0 = self.textCar[key][0]
