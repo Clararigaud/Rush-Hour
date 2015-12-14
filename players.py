@@ -82,7 +82,6 @@ class Player:
         
   def sync(self, player2):
     """Syncronise les scores de deux joueurs"""
-    assert isinstance(player2, type(player)), "<player2> must be of type player"
     self.name = player2.name
     for i in range (40):
       if player2.scores[i]:

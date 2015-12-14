@@ -241,8 +241,8 @@ class content_window :
   def show_error(self, string):
     if self.error:
       self.error.pack_forget()
-    self.error = Label(text=string)
-    self.error.pack()
+    self.error = Label(text=string, bg="#F55", fg="#fff", font=("courier",20))
+    self.error.pack(side=TOP)
 
   def close(self):
     self.top.destroy()
